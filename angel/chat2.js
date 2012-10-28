@@ -81,4 +81,17 @@ servidor.sockets.on('connection', function(socket){
 	socket.on('escribiendo', function(res){
 		servidor.sockets.emit('escribiendo', res);
 	});
+	
+	
+	socket.on('rename', function(nuevo){
+		user = {
+			nombre: nuevo,
+			iden: iden
+		}
+		delete usuarios[socket.username];
+		socket.username = nuevo;
+		usuarios[nuevo] = user;
+		servidor.sockets.emit('online', usuarios);
+		
+	});
 });

@@ -256,6 +256,11 @@ if (n == null || n == ""){
 				socket.emit('rename', comando[1]);
 				msgg = 'no';
 				break;
+			case '$privado':
+				tu.nombre = comando[1];
+				socket.emit('rename', comando[1]);
+				msgg = 'no';
+				break;
 		}
 		if (msgg == 'si'){
 			if (limpiarspaces == ''){

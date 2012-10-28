@@ -74,8 +74,7 @@
 					// $rename::nuevonomre
 					case '$rename':
 						n = comando[1];
-						user.nombre = n;
-						user.texto = "Me he cambiado el nombre";
+						socket.emit('rename', n);
 						break;
 					// Texto que camina
 					// $marquee::texto

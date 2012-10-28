@@ -59,7 +59,7 @@ if (n == null || n == ""){
 	n = 'Anonimo' + aleatorio.toFixed();
 }
 
-	var socket = io.connect('http://adsearch.mx:6546');
+	var socket = io.connect('http://localhost:6546');
 
 	socket.emit('entro', n);
 	socket.on('usuarioexiste', function(user){
@@ -212,7 +212,7 @@ if (n == null || n == ""){
 			if (value.nombre == tu.nombre){
 				eresTu = 'id="tu"';
 			}
-			$('#online').append('<li rel="user_' + value.nombre + '" ' + eresTu + '>' + value.nombre  + '<span class="actionUser"></spa></li>');
+			$('#online').append('<li rel="user_' + value.nombre + '" ' + eresTu + 'class = "privado" data-id="'+ value.nombre +'">' + value.nombre  + '<span class="actionUser"></spa></li>');
 
 		});
 		var nOnline = $('#online li').length;
@@ -239,6 +239,11 @@ if (n == null || n == ""){
 			$('[rel="user_' + res.user + '"] .actionUser').html('');
 		}
 	});
+	socket.on('recibePrivado', function(privado){
+		$('#logs').append('<article class="msg"><span class="time">' + hora() + '</span><em>MP de <strong>' + privado.de + '</strong><span>' + privado.texto + '</span></em></article>');
+
+		
+	});
 	function enviar (e) {
 		var texto = $('#mensaje').val();
 		var limpiarspaces = texto.replace(/ /g, '').replace(/\n/g, '');
@@ -257,8 +262,13 @@ if (n == null || n == ""){
 				msgg = 'no';
 				break;
 			case '$privado':
-				tu.nombre = comando[1];
-				socket.emit('rename', comando[1]);
+				
+				var privado = {
+					de: tu.nombre,
+					para: comando[1],
+					texto: comando[2]
+				}
+				socket.emit('recibePrivado', privado);
 				msgg = 'no';
 				break;
 		}
@@ -278,6 +288,7 @@ if (n == null || n == ""){
 		$('#mensaje').val('');
 		$('#action').html('');
 	}
+	
 
 
 function resize (){
@@ -368,6 +379,12 @@ function run () {
 	$('#help').click(function(e){
 		e.preventDefault();
 		$alert( '<article>' + $('#helpTxt').html() + '</article>', 'Ayuda' );
+	});
+	
+	$(".privado").live('click', function(event){
+		var userid = $(this).attr('rel').split('_')[1];
+		$("#mensaje").val("$privado::"+userid+"::");
+		
 	});
 
 }
